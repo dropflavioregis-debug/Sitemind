@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
 import DetectionOverlay from "./DetectionOverlay";
 import {
@@ -19,6 +20,8 @@ export type LiveCameraProps = {
   defaultModel?: DetectionModelId;
   lockedModel?: DetectionModelId;
   isActive?: boolean;
+  /** Shown when the camera cannot start (e.g. permission denied on pitch slides). */
+  fallbackImage?: string;
 };
 
 const DETECTION_INTERVAL_MS = 1500;
@@ -57,6 +60,7 @@ export default function LiveCamera({
   defaultModel = "ppe",
   lockedModel,
   isActive = true,
+  fallbackImage,
 }: LiveCameraProps) {
   const isEmbed = variant === "embed";
   const initialModel = lockedModel ?? defaultModel;
@@ -295,11 +299,12 @@ export default function LiveCamera({
     activeModel === "ppe" ? getPpeStatus(detections) : null;
 
   const maxWidthClass = isEmbed ? "max-w-2xl" : "max-w-5xl";
+  const showFallbackFeed = status === "error" && !!fallbackImage;
 
   const videoFrame = (
     <div
       className={`relative w-full ${maxWidthClass} aspect-video bg-slate-900 rounded-lg overflow-hidden border-2 transition-colors duration-500 ${
-        apiStatus === "ok"
+        showFallbackFeed || apiStatus === "ok"
           ? "border-emerald-500/80"
           : apiStatus === "error"
             ? "border-red-500"
@@ -435,7 +440,31 @@ export default function LiveCamera({
         </div>
       )}
 
-      {status === "error" && (
+      {status === "error" && fallbackImage && (
+        <>
+          <Image
+            src={fallbackImage}
+            alt="AI PPE detection on a construction site"
+            fill
+            className="object-cover"
+            sizes="(max-width: 1024px) 100vw, 672px"
+            priority
+          />
+          {isEmbed && (
+            <div className="absolute top-0 right-0 z-20 bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-bl-md tracking-wider">
+              LIVE
+            </div>
+          )}
+          <div className="absolute top-2 left-2 z-20 rounded-lg bg-black/75 backdrop-blur-sm border border-slate-700 px-2 py-1.5 text-xs min-w-[120px]">
+            <div className="flex items-center gap-2 font-medium text-emerald-300">
+              <span className="h-2.5 w-2.5 rounded-full shrink-0 bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)]" />
+              PPE · Demo feed
+            </div>
+          </div>
+        </>
+      )}
+
+      {status === "error" && !fallbackImage && (
         <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-slate-900 p-6 text-center">
           <p className="text-red-300 text-sm max-w-md">{errorMessage}</p>
           <button

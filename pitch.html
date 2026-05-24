@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SiteMind — Pitch Deck</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --blue: #2563eb;
+  --blue-600: #2563eb;
+  --slate-900: #0f172a;
+  --slate-700: #334155;
+  --slate-600: #475569;
+  --slate-500: #64748b;
+  --slate-400: #94a3b8;
+  --slate-200: #e2e8f0;
+  --red-200: #fecaca;
+  --red-50: #fef2f2;
+  --red-500: #ef4444;
+  --red-600: #dc2626;
+  --emerald-200: #a7f3d0;
+  --emerald-50: #ecfdf5;
+  --emerald-500: #10b981;
+  --emerald-600: #059669;
+  --amber-500: #f59e0b;
+  --dash-bg: #f0efe9;
+  --dash-border: #e4e2db;
+  --dash-text: #18181a;
+  --dash-text2: #5f5e58;
+  --dash-text3: #9e9b93;
+  --dash-accent: #f97316;
+}
+
+html, body { height: 100%; overflow: hidden; }
+body {
+  font-family: 'DM Sans', system-ui, sans-serif;
+  background: #fff;
+  color: var(--slate-900);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Deck shell ── */
+.deck { height: 100vh; width: 100vw; position: relative; overflow: hidden; }
+.slide {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column; justify-content: center;
+  padding: 3rem 2rem 5rem;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+.slide.active { opacity: 1; pointer-events: auto; z-index: 1; }
+.slide-inner { width: 100%; max-width: 72rem; margin: 0 auto; }
+
+/* Typography */
+.title-xl { font-size: clamp(2rem, 5vw, 3.75rem); font-weight: 700; letter-spacing: -0.025em; line-height: 1.1; }
+.title-xl .accent { color: var(--blue-600); }
+.subtitle { font-size: clamp(1.125rem, 2.5vw, 1.5rem); color: var(--blue-600); font-weight: 500; margin-top: 1rem; }
+.tagline { font-size: clamp(0.95rem, 1.5vw, 1.125rem); color: var(--slate-600); margin-top: 1rem; max-width: 42rem; }
+.slide-title { font-size: clamp(1.75rem, 3.5vw, 2.25rem); font-weight: 700; margin-bottom: 0.5rem; }
+.slide-sub { font-size: 0.875rem; color: var(--blue-600); font-weight: 500; margin-bottom: 1.5rem; }
+.key-line { font-size: clamp(1rem, 1.5vw, 1.125rem); font-weight: 500; color: #1d4ed8; margin-top: 2rem; text-align: center; }
+.text-center { text-align: center; }
+
+/* Bullets */
+.bullets { list-style: none; display: flex; flex-direction: column; gap: 1rem; }
+.bullets li { display: flex; align-items: flex-start; gap: 0.75rem; font-size: 1.125rem; color: var(--slate-700); }
+.bullet-dot { margin-top: 0.55rem; width: 0.5rem; height: 0.5rem; border-radius: 50%; background: var(--blue-600); flex-shrink: 0; }
+
+/* Two-column layout */
+.grid-2 { display: grid; gap: 2.5rem; align-items: center; }
+@media (min-width: 1024px) { .grid-2 { grid-template-columns: 1fr 1fr; } }
+
+.img-frame { position: relative; border-radius: 1rem; overflow: hidden; aspect-ratio: 4/3; box-shadow: 0 10px 25px rgba(0,0,0,.12); background: var(--slate-900); }
+.img-frame img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+/* Split compare */
+.split { display: grid; gap: 1rem; max-width: 56rem; margin: 0 auto; }
+@media (min-width: 768px) { .split { grid-template-columns: 1fr 1fr; gap: 1.5rem; } }
+.panel { border-radius: 0.75rem; border: 2px solid; padding: 1.25rem 1.5rem; }
+.panel.reality { border-color: var(--red-200); background: rgba(254,242,242,.5); }
+.panel.perception { border-color: var(--emerald-200); background: rgba(236,253,245,.5); }
+.panel h3 { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--slate-500); margin-bottom: 1rem; }
+.panel ul { list-style: none; display: flex; flex-direction: column; gap: 0.75rem; }
+.panel li { display: flex; align-items: center; gap: 0.75rem; color: #1e293b; }
+.panel .x { color: var(--red-500); font-weight: 700; }
+.panel .check { color: var(--emerald-500); font-weight: 700; }
+
+/* Flow diagram */
+.flow { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0.25rem; max-width: 56rem; margin: 2.5rem auto; }
+.flow-step { display: flex; flex-direction: column; align-items: center; }
+.flow-icon {
+  width: 4.5rem; height: 4.5rem; border-radius: 0.75rem;
+  background: var(--blue-600); color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 12px rgba(37,99,235,.25);
+  animation: flow-pulse 2s ease-in-out infinite;
+}
+@media (min-width: 768px) { .flow-icon { width: 5rem; height: 5rem; } }
+.flow-icon svg { width: 2rem; height: 2rem; }
+.flow-label { margin-top: 0.5rem; font-size: 0.75rem; font-weight: 500; color: var(--slate-700); text-align: center; max-width: 5.5rem; }
+.flow-arrow { color: #60a5fa; width: 2rem; height: 2rem; flex-shrink: 0; margin: 0 0.25rem; }
+@media (min-width: 768px) { .flow-arrow { width: 3rem; height: 3rem; margin: 0 0.5rem; } }
+@keyframes flow-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(37,99,235,.4); }
+  50% { box-shadow: 0 0 0 8px rgba(37,99,235,0); }
+}
+
+/* Cards */
+.cards-3 { display: grid; gap: 1.5rem; margin-top: 2.5rem; }
+@media (min-width: 768px) { .cards-3 { grid-template-columns: repeat(3, 1fr); } }
+.card {
+  border-radius: 0.75rem; border: 1px solid var(--slate-200);
+  background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.06);
+  padding: 1.5rem;
+}
+.card-icon { color: var(--blue-600); margin-bottom: 1rem; }
+.card-icon svg { width: 2.5rem; height: 2.5rem; }
+.card h4 { font-size: 1.125rem; font-weight: 600; }
+
+.cards-2 { display: grid; gap: 1.5rem; margin-top: 2.5rem; }
+@media (min-width: 768px) { .cards-2 { grid-template-columns: 1fr 1fr; } }
+.card p.desc { color: var(--slate-600); margin-top: 0.5rem; }
+
+/* Deploy icons */
+.deploy-icons { display: flex; justify-content: center; gap: 2rem; margin-top: 2.5rem; flex-wrap: wrap; }
+.deploy-icon { display: flex; flex-direction: column; align-items: center; gap: 0.5rem; }
+.deploy-icon-box {
+  width: 3.5rem; height: 3.5rem; border-radius: 0.75rem;
+  background: #eff6ff; border: 1px solid #dbeafe;
+  display: flex; align-items: center; justify-content: center; color: var(--blue-600);
+}
+.deploy-icon-box svg { width: 1.75rem; height: 1.75rem; }
+.deploy-icon span { font-size: 0.75rem; font-weight: 500; color: var(--slate-500); }
+
+/* Live demo slide */
+.demo-grid { display: grid; gap: 1.5rem; align-items: start; }
+@media (min-width: 1024px) { .demo-grid { grid-template-columns: 2fr 3fr; } }
+.demo-tiles { display: flex; flex-direction: column; gap: 1rem; }
+.demo-tile {
+  border-radius: 0.75rem; border: 2px solid; padding: 1rem;
+  display: flex; align-items: center; gap: 1rem;
+}
+.demo-tile.blue { border-color: #bfdbfe; background: #eff6ff; }
+.demo-tile.red { border-color: #fecaca; background: #fef2f2; }
+.demo-tile.emerald { border-color: #a7f3d0; background: #ecfdf5; }
+.demo-tile svg { width: 2.5rem; height: 2.5rem; flex-shrink: 0; }
+.demo-tile.blue svg { color: var(--blue-600); }
+.demo-tile.red svg { color: var(--red-600); }
+.demo-tile.emerald svg { color: var(--emerald-600); }
+.demo-tile h4 { font-weight: 600; font-size: 0.95rem; }
+.demo-tile p { font-size: 0.875rem; color: var(--slate-600); text-transform: capitalize; }
+.demo-camera { border-radius: 0.75rem; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,.12); background: #0f172a; }
+.demo-camera img { width: 100%; display: block; aspect-ratio: 16/10; object-fit: cover; }
+.demo-cta {
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+  width: 100%; padding: 0.75rem 1.25rem; border-radius: 0.75rem;
+  background: var(--blue-600); color: #fff; font-weight: 600; font-size: 0.875rem;
+  text-decoration: none; box-shadow: 0 1px 3px rgba(0,0,0,.1); transition: background .15s;
+}
+.demo-cta:hover { background: var(--blue-500); }
+.demo-cta svg { width: 1.25rem; height: 1.25rem; flex-shrink: 0; }
+
+/* Vision slide */
+.vision-frame {
+  position: relative; margin-top: 2.5rem; border-radius: 1rem; overflow: hidden;
+  aspect-ratio: 16/9; max-width: 48rem; margin-left: auto; margin-right: auto;
+  box-shadow: 0 20px 40px rgba(0,0,0,.15);
+}
+.vision-bg { position: absolute; inset: 0; background: linear-gradient(135deg, #0f172a, #172554, #0f172a); }
+.vision-grid {
+  position: absolute; inset: 0; opacity: 0.2;
+  background-image: linear-gradient(rgba(59,130,246,.3) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(59,130,246,.3) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+.vision-photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.4; mix-blend-mode: overlay; }
+.vision-overlay {
+  position: absolute; inset: 0; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; padding: 2rem;
+}
+.vision-blocks { display: grid; grid-template-columns: repeat(3,1fr); gap: 0.75rem; width: 100%; max-width: 28rem; margin-bottom: 1.5rem; }
+.vision-block {
+  height: 3rem; border-radius: 0.5rem; backdrop-filter: blur(4px);
+  display: flex; align-items: center; justify-content: center;
+}
+.vision-block svg { width: 1.5rem; height: 1.5rem; }
+.vision-block.blue { background: rgba(59,130,246,.3); border: 1px solid rgba(96,165,250,.5); color: #bfdbfe; }
+.vision-block.emerald { background: rgba(16,185,129,.3); border: 1px solid rgba(52,211,153,.5); color: #a7f3d0; }
+.vision-block.amber { background: rgba(245,158,11,.3); border: 1px solid rgba(251,191,36,.5); color: #fde68a; }
+.vision-caption { color: rgba(255,255,255,.9); font-size: 0.875rem; font-weight: 500; text-align: center; max-width: 32rem; line-height: 1.5; }
+.vision-text { font-size: clamp(1rem, 1.5vw, 1.25rem); color: var(--slate-700); font-weight: 500; margin-top: 2.5rem; max-width: 48rem; margin-left: auto; margin-right: auto; line-height: 1.6; text-align: center; }
+
+/* Slide 1 title + dashboard stack */
+.slide1-stack { display: flex; flex-direction: column; gap: 2rem; }
+.slide1-header { text-align: center; }
+@media (min-width: 1024px) { .slide1-header { text-align: left; } }
+
+/* ── Dashboard mockup (slide 1) ── */
+.dashboard {
+  border-radius: 11px; border: 1px solid var(--dash-border);
+  background: var(--dash-bg); box-shadow: 0 4px 16px rgba(0,0,0,.08);
+  overflow: hidden; display: flex; flex-direction: column;
+  height: min(52vh, 420px); min-height: 280px;
+}
+.dash-topbar {
+  height: 40px; padding: 0 12px; background: #fff;
+  border-bottom: 1px solid var(--dash-border);
+  display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;
+}
+.dash-brand { display: flex; align-items: center; gap: 8px; }
+.dash-logo {
+  width: 28px; height: 28px; background: var(--dash-text); border-radius: 6px;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 3px; padding: 6px;
+}
+.dash-logo span { background: #fff; border-radius: 1px; }
+.dash-logo span:nth-child(3) { background: var(--dash-accent); }
+.dash-brand-name { font-size: 14px; font-weight: 600; letter-spacing: -0.3px; }
+.dash-brand-name em { color: var(--dash-accent); font-style: normal; }
+.dash-context {
+  display: none; align-items: center; gap: 8px;
+  background: #f8f7f4; border: 1px solid var(--dash-border);
+  border-radius: 8px; padding: 4px 10px; font-size: 11px; color: var(--dash-text2);
+}
+@media (min-width: 640px) { .dash-context { display: flex; } }
+.dash-dot { width: 3px; height: 3px; border-radius: 50%; background: #ccc9bf; }
+.dash-live {
+  display: flex; align-items: center; gap: 4px;
+  background: #f0fdf4; border: 1px solid #86efac;
+  border-radius: 100px; padding: 2px 8px;
+  font-size: 10px; font-weight: 600; color: #16a34a;
+}
+.dash-live-dot { width: 6px; height: 6px; border-radius: 50%; background: #22c55e; animation: blink 1s ease-in-out infinite; }
+.dash-clock { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--dash-text2); display: none; }
+@media (min-width: 640px) { .dash-clock { display: block; } }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+.dash-grid {
+  flex: 1; min-height: 0; display: grid; gap: 10px; padding: 10px;
+  grid-template-columns: 1fr 0.85fr 1.55fr;
+  grid-template-rows: 1fr 88px;
+}
+.dash-card {
+  background: #fff; border-radius: 9px; border: 1px solid var(--dash-border);
+  box-shadow: 0 1px 3px rgba(0,0,0,.06);
+  display: flex; flex-direction: column; overflow: hidden; min-height: 0;
+}
+.dash-card-head {
+  padding: 6px 10px; border-bottom: 1px solid var(--dash-border);
+  display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;
+}
+.dash-card-head span { font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; color: var(--dash-text2); }
+.badge { font-size: 9px; font-weight: 500; padding: 2px 6px; border-radius: 100px; display: flex; align-items: center; gap: 4px; }
+.badge-amber { background: #fffbeb; color: #d97706; }
+.badge-blue { background: #eff6ff; color: #2563eb; }
+.badge-dot { width: 4px; height: 4px; border-radius: 50%; background: currentColor; animation: blink 1s ease-in-out infinite; }
+
+.dash-feed { position: relative; flex: 1; min-height: 100px; background: #1c1b16; }
+.dash-feed img { width: 100%; height: 100%; object-fit: cover; object-position: center 20%; display: block; position: absolute; inset: 0; }
+.dash-feed-grad { position: absolute; inset: 0; background: linear-gradient(180deg,rgba(0,0,0,.35) 0%,transparent 28%,transparent 72%,rgba(0,0,0,.45) 100%); pointer-events: none; }
+.dash-rec { position: absolute; top: 8px; left: 8px; display: flex; align-items: center; gap: 4px; font-size: 8px; font-weight: 600; color: rgba(255,255,255,.8); letter-spacing: .05em; z-index: 2; }
+.dash-rec-dot { width: 6px; height: 6px; border-radius: 50%; background: #ef4444; animation: blink 1s ease-in-out infinite; }
+.dash-latency { position: absolute; top: 8px; right: 8px; z-index: 2; background: rgba(0,0,0,.65); border: 1px solid rgba(255,255,255,.1); border-radius: 4px; padding: 2px 6px; font-size: 8px; color: rgba(255,255,255,.9); }
+.dash-ts { position: absolute; bottom: 6px; left: 8px; z-index: 2; font-family: 'DM Mono', monospace; font-size: 8px; color: rgba(255,255,255,.7); }
+.dash-stats { display: grid; grid-template-columns: repeat(3,1fr); border-top: 1px solid var(--dash-border); flex-shrink: 0; }
+.dash-stat { padding: 4px 8px; border-right: 1px solid var(--dash-border); }
+.dash-stat:last-child { border-right: none; }
+.dash-stat label { font-size: 7px; text-transform: uppercase; letter-spacing: .04em; color: var(--dash-text3); font-weight: 500; display: block; }
+.dash-stat .stat-val { font-family: 'DM Mono', monospace; font-size: 11px; font-weight: 500; color: var(--dash-text); }
+
+.dash-alerts { flex: 1; padding: 6px; display: flex; flex-direction: column; gap: 4px; overflow: hidden; min-height: 0; }
+.alert { border-radius: 8px; border: 1px solid; padding: 4px 8px; display: flex; gap: 6px; font-size: 9px; }
+.alert.critical { background: #fef2f2; border-color: #fecaca; }
+.alert.warning { background: #fffbeb; border-color: #fde68a; }
+.alert.milestone { background: #fdf4ff; border-color: #e9d5ff; }
+.alert.resolved { background: #f0fdf4; border-color: #86efac; opacity: .75; }
+.alert-title { font-weight: 600; }
+.alert.critical .alert-title { color: #dc2626; }
+.alert.warning .alert-title { color: #d97706; }
+.alert.milestone .alert-title { color: #7c3aed; }
+.alert.resolved .alert-title { color: #16a34a; }
+.alert-desc { font-size: 8px; color: var(--dash-text2); line-height: 1.3; }
+.alert-meta { font-size: 7px; color: var(--dash-text3); font-family: 'DM Mono', monospace; margin-top: 2px; }
+.alert-chips { display: grid; grid-template-columns: repeat(3,1fr); gap: 4px; padding: 6px; border-top: 1px solid var(--dash-border); flex-shrink: 0; }
+.chip { border-radius: 8px; border: 1px solid; text-align: center; padding: 2px 0; }
+.chip.red { background: #fef2f2; border-color: #fecaca; color: #dc2626; }
+.chip.yellow { background: #fffbeb; border-color: #fde68a; color: #d97706; }
+.chip.green { background: #f0fdf4; border-color: #86efac; color: #16a34a; }
+.chip .chip-n { font-family: 'DM Mono', monospace; font-size: 12px; font-weight: 500; display: block; line-height: 1; }
+.chip label { font-size: 7px; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; }
+
+.dash-gantt { padding: 8px; border-bottom: 1px solid var(--dash-border); flex-shrink: 0; }
+.gantt-label { display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 8px; color: var(--dash-text3); text-transform: uppercase; letter-spacing: .04em; font-weight: 500; }
+.gantt-bar { position: relative; height: 24px; background: #f8f7f4; border-radius: 4px; border: 1px solid var(--dash-border); overflow: hidden; }
+.gantt-phase { position: absolute; top: 4px; bottom: 4px; border-radius: 3px; opacity: .9; }
+.gantt-today { position: absolute; top: 0; bottom: 0; width: 1px; background: rgba(24,24,26,.4); left: 52%; z-index: 1; }
+.gantt-legend { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+.gantt-legend span { display: flex; align-items: center; gap: 4px; font-size: 7px; color: var(--dash-text2); }
+.gantt-legend i { width: 8px; height: 8px; border-radius: 2px; display: block; }
+.safety-stats { display: grid; grid-template-columns: repeat(4,1fr); border-bottom: 1px solid var(--dash-border); flex-shrink: 0; }
+.safety-stat { padding: 6px 8px; border-right: 1px solid var(--dash-border); }
+.safety-stat:last-child { border-right: none; }
+.safety-stat label { font-size: 7px; text-transform: uppercase; letter-spacing: .04em; color: var(--dash-text3); font-weight: 500; }
+.safety-stat .stat-val { font-family: 'DM Mono', monospace; font-size: 16px; font-weight: 500; line-height: 1; display: block; margin-top: 2px; }
+.safety-stat .stat-val.red { color: #dc2626; }
+.safety-stat .stat-val.green { color: #16a34a; }
+.safety-stat .stat-val.yellow { color: #d97706; }
+.dash-topbar-right { display: flex; align-items: center; gap: 8px; }
+.safety-stat sub { font-size: 7px; color: var(--dash-text3); }
+.incidents-head { padding: 4px 10px; background: #f8f7f4; border-bottom: 1px solid var(--dash-border); font-size: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; color: var(--dash-text2); }
+.incidents-table { width: 100%; border-collapse: collapse; font-size: 9px; }
+.incidents-table th { text-align: left; font-weight: 500; color: var(--dash-text3); padding: 4px 8px; border-bottom: 1px solid var(--dash-border); }
+.incidents-table td { padding: 4px 8px; border-bottom: 1px solid rgba(228,226,219,.6); color: var(--dash-text2); }
+.incidents-table td:first-child { color: var(--dash-text); font-weight: 500; }
+.incidents-table td:last-child { text-align: right; font-family: 'DM Mono', monospace; color: var(--dash-text3); }
+.pill { display: inline-block; font-size: 8px; font-weight: 600; padding: 2px 6px; border-radius: 4px; border: 1px solid; }
+.pill.red { background: #fef2f2; color: #dc2626; border-color: #fecaca; }
+.pill.green { background: #f0fdf4; color: #16a34a; border-color: #86efac; }
+.pill.yellow { background: #fffbeb; color: #d97706; border-color: #fde68a; }
+
+.dash-compliance { grid-column: 1 / -1; }
+.compliance-body { flex: 1; display: flex; min-height: 0; }
+.compliance-entry { flex: 1; padding: 6px 10px; display: flex; flex-direction: column; justify-content: center; border-right: 1px solid var(--dash-border); min-width: 0; }
+.compliance-entry:last-child { border-right: none; }
+.compliance-entry p { font-size: 9px; font-weight: 500; color: var(--dash-text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.compliance-meta { display: flex; align-items: center; gap: 6px; margin-top: 2px; }
+.compliance-meta time { font-family: 'DM Mono', monospace; font-size: 8px; color: var(--dash-text3); }
+.evidence { font-size: 7px; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; color: #16a34a; background: #f0fdf4; border: 1px solid #86efac; border-radius: 3px; padding: 1px 4px; }
+
+/* ── Navigation ── */
+.nav {
+  position: fixed; bottom: 1.5rem; left: 0; right: 0;
+  display: flex; align-items: center; justify-content: center; gap: 1rem; z-index: 100;
+}
+.nav-btn {
+  pointer-events: auto; padding: 0.5rem; border-radius: 9999px;
+  background: rgba(255,255,255,.9); border: 1px solid var(--slate-200);
+  box-shadow: 0 4px 12px rgba(0,0,0,.08); color: var(--slate-600);
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: color .15s;
+}
+.nav-btn:hover:not(:disabled) { color: var(--blue-600); }
+.nav-btn:disabled { opacity: .3; cursor: not-allowed; }
+.nav-btn svg { width: 1.25rem; height: 1.25rem; }
+.dots { display: flex; align-items: center; gap: 0.5rem; pointer-events: auto; }
+.dot-btn {
+  height: 0.5rem; border-radius: 9999px; border: none; cursor: pointer;
+  background: #cbd5e1; transition: all .2s; padding: 0;
+}
+.dot-btn.active { width: 1.5rem; background: var(--blue-600); }
+.dot-btn:not(.active) { width: 0.5rem; }
+.dot-btn:not(.active):hover { background: #94a3b8; }
+.slide-counter {
+  position: fixed; top: 1rem; right: 1.5rem;
+  font-size: 0.75rem; color: var(--slate-400); font-weight: 500; z-index: 100;
+}
+</style>
+</head>
+<body>
+
+<div class="deck" id="deck">
+  <div class="slide-counter" id="counter">1 / 8</div>
+
+  <!-- Slide 1: Title + Dashboard -->
+  <section class="slide active" data-slide="1">
+    <div class="slide-inner slide1-stack">
+      <div class="slide1-header">
+        <h1 class="title-xl"><span class="accent">Site</span>Mind</h1>
+        <p class="subtitle">AI-powered construction site intelligence</p>
+        <p class="tagline">Connecting safety, compliance, and project progress in real time</p>
+      </div>
+      <div class="dashboard">
+        <div class="dash-topbar">
+          <div class="dash-brand">
+            <div class="dash-logo"><span></span><span></span><span></span><span></span></div>
+            <span class="dash-brand-name">Site<em>mind</em></span>
+          </div>
+          <div class="dash-context"><span>Sydney Site #42</span><span class="dash-dot"></span><span>Zone A · Cam 01</span></div>
+          <div class="dash-topbar-right">
+            <span class="dash-live"><span class="dash-live-dot"></span> LIVE</span>
+            <span class="dash-clock">14:32:08</span>
+          </div>
+        </div>
+        <div class="dash-grid">
+          <div class="dash-card" style="grid-row:1;grid-column:1;">
+            <div class="dash-card-head">
+              <span>Live feed</span>
+              <span class="badge badge-amber"><span class="badge-dot"></span> PPE scan</span>
+            </div>
+            <div class="dash-feed">
+              <img src="public/images/ppe-worker-feed.png" alt="Worker with PPE detection overlays">
+              <div class="dash-feed-grad"></div>
+              <div class="dash-rec"><span class="dash-rec-dot"></span> REC</div>
+              <div class="dash-latency">PPE · 142ms</div>
+              <span class="dash-ts">2026-05-24 14:32:08</span>
+            </div>
+            <div class="dash-stats">
+              <div class="dash-stat"><label>Scans</label><span class="stat-val">847</span></div>
+              <div class="dash-stat"><label>Objects</label><span class="stat-val">3</span></div>
+              <div class="dash-stat"><label>Latency</label><span class="stat-val">142ms</span></div>
+            </div>
+          </div>
+          <div class="dash-card" style="grid-row:1;grid-column:2;">
+            <div class="dash-card-head"><span>Alerts</span></div>
+            <div class="dash-alerts">
+              <div class="alert critical"><span>⚠</span><div><div class="alert-title">Zone B hazard</div><div class="alert-desc">Unsecured scaffolding</div><div class="alert-meta">14:28 · Cam 03</div></div></div>
+              <div class="alert warning"><span>◆</span><div><div class="alert-title">Benchtop obstruction</div><div class="alert-desc">Clearance &lt; 600mm</div><div class="alert-meta">14:26 · Zone A</div></div></div>
+              <div class="alert milestone"><span>★</span><div><div class="alert-title">Level 3 milestone</div><div class="alert-desc">Framing 67% complete</div><div class="alert-meta">14:25 · Programme</div></div></div>
+              <div class="alert resolved"><span>✓</span><div><div class="alert-title">PPE cleared</div><div class="alert-desc">Zone A all compliant</div><div class="alert-meta">14:22 · Cam 01</div></div></div>
+            </div>
+            <div class="alert-chips">
+              <div class="chip red"><strong class="chip-n">1</strong><label>Critical</label></div>
+              <div class="chip yellow"><strong class="chip-n">2</strong><label>Warning</label></div>
+              <div class="chip green"><strong class="chip-n">4</strong><label>Resolved</label></div>
+            </div>
+          </div>
+          <div class="dash-card" style="grid-row:1;grid-column:3;">
+            <div class="dash-card-head">
+              <span>Programme &amp; safety</span>
+              <span class="badge badge-blue">Week 18</span>
+            </div>
+            <div class="dash-gantt">
+              <div class="gantt-label"><span>Construction phases</span><span style="font-family:'DM Mono',monospace;color:var(--dash-text2);text-transform:none;">Today ▼</span></div>
+              <div class="gantt-bar">
+                <div class="gantt-phase" style="left:0;width:14%;background:#534AB7;" title="Prelim"></div>
+                <div class="gantt-phase" style="left:12%;width:22%;background:#185FA5;" title="Structure"></div>
+                <div class="gantt-phase" style="left:32%;width:18%;background:#0F6E56;" title="Envelope"></div>
+                <div class="gantt-phase" style="left:48%;width:24%;background:#BA7517;" title="Fit-out"></div>
+                <div class="gantt-phase" style="left:70%;width:16%;background:#993C1D;" title="Finishes"></div>
+                <div class="gantt-phase" style="left:84%;width:12%;background:#993556;" title="Commission"></div>
+                <div class="gantt-today"></div>
+              </div>
+              <div class="gantt-legend">
+                <span><i style="background:#534AB7"></i>Prelim</span>
+                <span><i style="background:#185FA5"></i>Structure</span>
+                <span><i style="background:#0F6E56"></i>Envelope</span>
+                <span><i style="background:#BA7517"></i>Fit-out</span>
+                <span><i style="background:#993C1D"></i>Finishes</span>
+                <span><i style="background:#993556"></i>Commission</span>
+              </div>
+            </div>
+            <div class="safety-stats">
+              <div class="safety-stat"><label>Open</label><span class="stat-val red">1</span><sub>incidents</sub></div>
+              <div class="safety-stat"><label>PPE</label><span class="stat-val green">94%</span><sub>compliance</sub></div>
+              <div class="safety-stat"><label>Behind</label><span class="stat-val yellow">2d</span><sub>programme</sub></div>
+              <div class="safety-stat"><label>On site</label><span class="stat-val">47</span><sub>workers</sub></div>
+            </div>
+            <div class="incidents-head">Active incidents</div>
+            <table class="incidents-table">
+              <thead><tr><th>Zone</th><th>Type</th><th>Status</th><th>Time</th></tr></thead>
+              <tbody>
+                <tr><td>Zone B · L3</td><td>Trip hazard</td><td><span class="pill red">Open</span></td><td>14:28</td></tr>
+                <tr><td>Zone A · Entry</td><td>Missing hard hat</td><td><span class="pill green">Resolved</span></td><td>14:22</td></tr>
+                <tr><td>Zone C · Plant</td><td>Exclusion breach</td><td><span class="pill yellow">Monitoring</span></td><td>14:15</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="dash-card dash-compliance">
+            <div class="dash-card-head"><span>Compliance log — auto-captured</span></div>
+            <div class="compliance-body">
+              <div class="compliance-entry"><p>PPE scan logged — Zone A</p><div class="compliance-meta"><time>14:31:02</time><span class="evidence">evidence</span></div></div>
+              <div class="compliance-entry"><p>SWMS acknowledgement — electrical</p><div class="compliance-meta"><time>14:29:44</time><span class="evidence">evidence</span></div></div>
+              <div class="compliance-entry"><p>Daily pre-start — crew 12</p><div class="compliance-meta"><time>14:18:11</time></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 2: Problem -->
+  <section class="slide" data-slide="2">
+    <div class="slide-inner grid-2">
+      <div>
+        <h2 class="slide-title">Construction sites are blind</h2>
+        <p class="slide-sub">Australia</p>
+        <ul class="bullets">
+          <li><span class="bullet-dot"></span><span>Injuries and fatalities are preventable — Australia loses ~169 workers per year</span></li>
+          <li><span class="bullet-dot"></span><span>Safety checks are manual and inconsistent</span></li>
+          <li><span class="bullet-dot"></span><span>Project progress is based on delayed reporting</span></li>
+          <li><span class="bullet-dot"></span><span>Projects consistently run over budget and over time</span></li>
+        </ul>
+      </div>
+      <div class="img-frame">
+        <img src="public/images/ppe7.jpg" alt="Construction site with AI PPE detection overlays">
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 3: Cost -->
+  <section class="slide" data-slide="3">
+    <div class="slide-inner">
+      <h2 class="slide-title">The disconnect between site and plan</h2>
+      <div class="split">
+        <div class="panel reality">
+          <h3>What is happening on site</h3>
+          <ul>
+            <li><span class="x">✕</span> Delays accumulating</li>
+            <li><span class="x">✕</span> Missing PPE on workers</li>
+            <li><span class="x">✕</span> Late reporting from supervisors</li>
+          </ul>
+        </div>
+        <div class="panel perception">
+          <h3>What managers think is happening</h3>
+          <ul>
+            <li><span class="check">✓</span> On schedule</li>
+            <li><span class="check">✓</span> Safety compliance verified</li>
+            <li><span class="check">✓</span> Reports submitted on time</li>
+          </ul>
+        </div>
+      </div>
+      <p class="key-line">Decisions are made on outdated information</p>
+    </div>
+  </section>
+
+  <!-- Slide 4: Solution -->
+  <section class="slide" data-slide="4">
+    <div class="slide-inner text-center">
+      <h2 class="slide-title">SiteMind closes the loop</h2>
+      <div class="flow">
+        <div class="flow-step"><div class="flow-icon"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg></div><span class="flow-label">Camera</span></div>
+        <svg class="flow-arrow" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+        <div class="flow-step"><div class="flow-icon"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg></div><span class="flow-label">AI</span></div>
+        <svg class="flow-arrow" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+        <div class="flow-step"><div class="flow-icon"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 9l4-4 4 4m0 6l-4 4-4-4"/></svg></div><span class="flow-label">Decision</span></div>
+        <svg class="flow-arrow" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+        <div class="flow-step"><div class="flow-icon"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg></div><span class="flow-label">Action</span></div>
+        <svg class="flow-arrow" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+        <div class="flow-step"><div class="flow-icon"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"/></svg></div><span class="flow-label">Dashboard update</span></div>
+      </div>
+      <p class="key-line">From physical reality → to live project intelligence</p>
+    </div>
+  </section>
+
+  <!-- Slide 5: Live Demo -->
+  <section class="slide" data-slide="5">
+    <div class="slide-inner">
+      <h2 class="slide-title text-center" style="margin-bottom:2rem;">Real-time site intelligence</h2>
+      <div class="demo-grid">
+        <div class="demo-tiles">
+          <div class="demo-tile blue">
+            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+            <div><h4>PPE detection</h4><p>safe / unsafe</p></div>
+          </div>
+          <div class="demo-tile red">
+            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+            <div><h4>Hazard detection</h4><p>alert</p></div>
+          </div>
+          <div class="demo-tile emerald">
+            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+            <div><h4>Progress tracking</h4><p id="progress-pct">67% updated</p></div>
+          </div>
+          <a class="demo-cta" href="/" target="_blank" rel="noopener noreferrer">
+            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+            Open live camera demo
+          </a>
+        </div>
+        <div class="demo-camera">
+          <img src="public/images/ppe-detection-camera.png" alt="Live PPE detection camera feed">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 6: Outcomes -->
+  <section class="slide" data-slide="6">
+    <div class="slide-inner">
+      <h2 class="slide-title text-center">Not just safety — productivity + control</h2>
+      <div class="cards-3">
+        <div class="card">
+          <div class="card-icon"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg></div>
+          <h4>Fewer preventable incidents</h4>
+        </div>
+        <div class="card">
+          <div class="card-icon"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg></div>
+          <h4>Faster project updates</h4>
+        </div>
+        <div class="card">
+          <div class="card-icon"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg></div>
+          <h4>Reduced site coordination overhead</h4>
+        </div>
+      </div>
+      <p class="key-line">One system replacing fragmented reporting</p>
+    </div>
+  </section>
+
+  <!-- Slide 7: Deploy -->
+  <section class="slide" data-slide="7">
+    <div class="slide-inner">
+      <h2 class="slide-title text-center">Works with existing infrastructure</h2>
+      <div class="cards-2">
+        <div class="card"><h4>Use existing CCTV / cameras</h4><p class="desc">Connect feeds you already have on site</p></div>
+        <div class="card"><h4>Deploy SiteMind edge nodes</h4><p class="desc">ESP32 / rugged devices for remote zones</p></div>
+      </div>
+      <div class="deploy-icons">
+        <div class="deploy-icon"><div class="deploy-icon-box"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg></div><span>CCTV</span></div>
+        <div class="deploy-icon"><div class="deploy-icon-box"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg></div><span>Drone</span></div>
+        <div class="deploy-icon"><div class="deploy-icon-box"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"/></svg></div><span>Device</span></div>
+        <div class="deploy-icon"><div class="deploy-icon-box"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"/></svg></div><span>Cloud</span></div>
+      </div>
+      <p class="key-line">No rebuild required. Instant integration.</p>
+    </div>
+  </section>
+
+  <!-- Slide 8: Vision -->
+  <section class="slide" data-slide="8">
+    <div class="slide-inner text-center">
+      <h2 class="slide-title">The digital twin of every construction site</h2>
+      <div class="vision-frame">
+        <div class="vision-bg"></div>
+        <div class="vision-grid"></div>
+        <img class="vision-photo" src="https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=900&q=80" alt="Construction site aerial">
+        <div class="vision-overlay">
+          <div class="vision-blocks">
+            <div class="vision-block blue" title="Live intelligence overlay" aria-label="Live intelligence overlay">
+              <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6.75 3.75a3 3 0 00-3 3v10.5a3 3 0 003 3h10.5a3 3 0 003-3V6.75a3 3 0 00-3-3H6.75z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12.75l2.25 2.25L15 9.75M12 3v2.25M12 18.75V21M3 12h2.25M18.75 12H21"/></svg>
+            </div>
+            <div class="vision-block emerald" title="Real-time risk map" aria-label="Real-time risk map">
+              <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 6.75V15m6-6v8.25m.503 3.498l4.875-2.437c.381-.19.622-.58.622-1.006V4.82c0-.836-.88-1.38-1.628-1.006l-3.869 1.934a1.125 1.125 0 01-1.006 0L9.75 3.75 4.502 6.252c-.38.19-.622.58-.622 1.006v8.226c0 .427.24.816.622 1.006l4.875 2.437a1.125 1.125 0 001.006 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 9v3l1.5 1.5"/></svg>
+            </div>
+            <div class="vision-block amber" title="Measurable progress" aria-label="Measurable progress">
+              <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z"/></svg>
+            </div>
+          </div>
+          <p class="vision-caption">Live intelligence overlay · Real-time risk map · Measurable progress</p>
+        </div>
+      </div>
+      <p class="vision-text">Every camera becomes intelligence. Every site becomes measurable. Every risk becomes visible in real time.</p>
+    </div>
+  </section>
+</div>
+
+<nav class="nav" aria-label="Slide navigation">
+  <button type="button" class="nav-btn" id="prev" disabled aria-label="Previous slide">
+    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+  </button>
+  <div class="dots" id="dots"></div>
+  <button type="button" class="nav-btn" id="next" aria-label="Next slide">
+    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+  </button>
+</nav>
+
+<script>
+(function () {
+  const SLIDE_COUNT = 8;
+  const slides = document.querySelectorAll('.slide');
+  const counter = document.getElementById('counter');
+  const prevBtn = document.getElementById('prev');
+  const nextBtn = document.getElementById('next');
+  const dotsEl = document.getElementById('dots');
+  const progressEl = document.getElementById('progress-pct');
+  let current = 0;
+  let progressTimer = null;
+
+  for (let i = 0; i < SLIDE_COUNT; i++) {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'dot-btn' + (i === 0 ? ' active' : '');
+    btn.setAttribute('aria-label', 'Go to slide ' + (i + 1));
+    btn.addEventListener('click', () => goTo(i));
+    dotsEl.appendChild(btn);
+  }
+
+  function parseHash() {
+    const m = location.hash.match(/^#slide-(\d+)$/);
+    if (!m) return null;
+    const n = parseInt(m[1], 10);
+    return n >= 1 && n <= SLIDE_COUNT ? n - 1 : null;
+  }
+
+  function goTo(index) {
+    current = Math.max(0, Math.min(SLIDE_COUNT - 1, index));
+    slides.forEach((s, i) => s.classList.toggle('active', i === current));
+    dotsEl.querySelectorAll('.dot-btn').forEach((d, i) => d.classList.toggle('active', i === current));
+    counter.textContent = (current + 1) + ' / ' + SLIDE_COUNT;
+    prevBtn.disabled = current === 0;
+    nextBtn.disabled = current === SLIDE_COUNT - 1;
+    history.replaceState(null, '', '#slide-' + (current + 1));
+    if (progressTimer) { clearInterval(progressTimer); progressTimer = null; }
+    if (current === 4 && progressEl) {
+      let pct = 67;
+      progressTimer = setInterval(() => {
+        pct = pct >= 92 ? 67 : pct + 1;
+        progressEl.textContent = pct + '% updated';
+      }, 3000);
+    }
+  }
+
+  prevBtn.addEventListener('click', () => goTo(current - 1));
+  nextBtn.addEventListener('click', () => goTo(current + 1));
+
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); goTo(current + 1); }
+    else if (e.key === 'ArrowLeft') { e.preventDefault(); goTo(current - 1); }
+    else if (e.key === 'Home') { e.preventDefault(); goTo(0); }
+    else if (e.key === 'End') { e.preventDefault(); goTo(SLIDE_COUNT - 1); }
+  });
+
+  window.addEventListener('hashchange', () => {
+    const h = parseHash();
+    if (h !== null) goTo(h);
+  });
+
+  const fromHash = parseHash();
+  goTo(fromHash !== null ? fromHash : 0);
+})();
+</script>
+</body>
+</html>
